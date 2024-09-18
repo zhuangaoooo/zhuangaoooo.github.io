@@ -1,0 +1,291 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Note | Vision-Language Modeling | ZA</title>
+<link rel="shortcut icon" href="https://zhuangaoooo.github.io//favicon.ico?v=1726663026676">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://zhuangaoooo.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Note | Vision-Language Modeling | ZA - Atom Feed" href="https://zhuangaoooo.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="An Introduction to Vision-Language Modeling
+[2405.17247] An Introduction to Vision-Language Modeling (arxiv.org)
+
+Abstra..." />
+    <meta name="keywords" content="VLM" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://zhuangaoooo.github.io/">
+  <img class="avatar" src="https://zhuangaoooo.github.io//images/avatar.png?v=1726663026676" alt="">
+  </a>
+  <h1 class="site-title">
+    ZA
+  </h1>
+  <p class="site-description">
+    Wish my blogs can give you a help!
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          Home
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          Archives
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          Tags
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          About
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Note | Vision-Language Modeling
+            </h2>
+            <div class="post-info">
+              <span>
+                2024-09-18
+              </span>
+              <span>
+                5 min read
+              </span>
+              
+                <a href="https://zhuangaoooo.github.io/tag/2rMLY9sgp/" class="post-tag">
+                  # VLM
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h1 id="an-introduction-to-vision-language-modeling">An Introduction to Vision-Language Modeling</h1>
+<p>[<a href="https://arxiv.org/abs/2405.17247">2405.17247] An Introduction to Vision-Language Modeling (arxiv.org)</a></p>
+<figure data-type="image" tabindex="1"><img src="file://D:/OneDrive/1%E5%8D%8F%E5%90%8C%E5%AE%9A%E4%BD%8D/orb-slam3%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/assets/image-20240917195005804.png" alt="image-20240917195005804" loading="lazy"></figure>
+<h2 id="abstract">Abstract</h2>
+<p>Challenges needed to be addressed.</p>
+<p>Language is discrete, vision is in a high dimensional space in which concepts cannot always be easily discretized.</p>
+<h2 id="introduction">Introduction</h2>
+<p>Problems unsolved in connecting language to vision:</p>
+<ol>
+<li>Struggle to understand spatial relationships(Fei-fei Li is focusing on spatial intelligence) or count without complicated engineering overhead that relies on additional data annotation.</li>
+<li>Lack an understanding of attributes and ordering.</li>
+<li>Hallucinate and produce content that is neither required nor relevant.</li>
+</ol>
+<h2 id="the-families-of-vlms">The Families of VLMs</h2>
+<p>Four different training paradigms:</p>
+<ol>
+<li>Contrastive training: leverages pairs of positive and negative examples.</li>
+<li>Masking: leverages reconstruction of masked image patched given some unmasked text.</li>
+<li>Pretrained backbones: leverage open-source LLMs like Llama to learn a mapping between an image encoder and the LLM.</li>
+<li>Generative.</li>
+</ol>
+<p>Many approaches rely on a mix of contrastive, masking and generative criteria.</p>
+<figure data-type="image" tabindex="2"><img src="file://D:/OneDrive/1%E5%8D%8F%E5%90%8C%E5%AE%9A%E4%BD%8D/orb-slam3%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/assets/image-20240917204633001.png" alt="image-20240917204633001" loading="lazy"></figure>
+<h3 id="early-work-on-vlms-based-on-transformers">Early work on VLMs based on transformers</h3>
+<p>visual-BERT and ViL-BERT: combine text with images tokens</p>
+<p>The models are trained on two objectives: 1) a classical masked modelling task that aims to predict the missing part in a given input; and 2) a sentence-image prediction task that aims to predict if a caption is actually describing an image content.</p>
+<h3 id="contrastive-based-vlms">Contrastive-based VLMs</h3>
+<p>Energy-Based Models(EBM) can better explain contrastive-based trainning.</p>
+<p>Data from a target distribution should have low energy while any other data points should have higher energy.</p>
+<p>Consider input data <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">x</span></span></span></span> with an energy function <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>E</mi><mi>θ</mi></msub><mo>(</mo><mi>x</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">E_\theta (x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.05764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span></span></span></span> of parameters <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span></span></span></span>. The corresponding Boltzman distribution density function to learn:</p>
+<figure data-type="image" tabindex="3"><img src="file://D:/OneDrive/1%E5%8D%8F%E5%90%8C%E5%AE%9A%E4%BD%8D/orb-slam3%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/assets/image-20240917205540730.png" alt="image-20240917205540730" loading="lazy"></figure>
+<p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>Z</mi><mi>θ</mi></msub><mo>=</mo><msub><mo>∑</mo><mi>x</mi></msub><msup><mi>e</mi><mrow><mo>−</mo><msub><mi>E</mi><mi>θ</mi></msub><mo>(</mo><mi>x</mi><mo>)</mo></mrow></msup></mrow><annotation encoding="application/x-tex">Z_\theta=\sum_x e^{-E_\theta(x)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">Z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.18771em;vertical-align:-0.29971000000000003em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:-0.0000050000000000050004em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.0016819999999999613em;"><span style="top:-2.40029em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">x</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.29971000000000003em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8879999999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3487714285714287em;margin-left:-0.05764em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15122857142857138em;"><span></span></span></span></span></span></span><span class="mopen mtight">(</span><span class="mord mathdefault mtight">x</span><span class="mclose mtight">)</span></span></span></span></span></span></span></span></span></span></span></span> is the normalization factor.</p>
+<p>Use the traditional maximum likelihood objective to estimate the target distribution <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>P</mi><mi>D</mi></msub></mrow><annotation encoding="application/x-tex">P_D</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></p>
+<figure data-type="image" tabindex="4"><img src="file://D:/OneDrive/1%E5%8D%8F%E5%90%8C%E5%AE%9A%E4%BD%8D/orb-slam3%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/assets/image-20240917211214657.png" alt="image-20240917211214657" loading="lazy"></figure>
+<p>To find the <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span></span></span></span>, we need to calculate the Gradient:</p>
+<figure data-type="image" tabindex="5"><img src="file://D:/OneDrive/1%E5%8D%8F%E5%90%8C%E5%AE%9A%E4%BD%8D/orb-slam3%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/assets/assets%5Cimage-20240917211243064-1726578764048-1.png" alt="image-20240917211243064" loading="lazy"></figure>
+<figure data-type="image" tabindex="6"><img src="file://D:/OneDrive/1%E5%8D%8F%E5%90%8C%E5%AE%9A%E4%BD%8D/orb-slam3%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/assets/assets%5Cimage-20240917212544769.png" alt="image-20240917212544769" loading="lazy"></figure>
+<p>The above requires <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>x</mi><mo>−</mo></msup><mo>∼</mo><msub><mi>P</mi><mi>θ</mi></msub><mo>(</mo><mi>x</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">x^- \sim P_\theta(x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.771331em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.771331em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">−</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span></span></span></span>, which corresponds to a sample from the model distribution that can be intractable (<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>Z</mi><mi>θ</mi></msub></mrow><annotation encoding="application/x-tex">Z_\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">Z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> is difficult to calculate). There are several techniques to approximate such a distribution.</p>
+<ol>
+<li>Markov Chain Monte Carlo (MCMC): find examples that minimize the predicted energy through an iterative process.</li>
+<li>Score Matching and Denoising Score Matching criteria: remove the normalization factor by learning only the gradient of the probability density with respect to the input data.</li>
+<li>Noise Contrastive Estimation(NCE).</li>
+</ol>
+<p>NCE: Sampling from a noise distribution <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>u</mi><mo mathvariant="normal">′</mo></msup><mo>∼</mo><msub><mi>p</mi><mi>n</mi></msub><mo>(</mo><msup><mi>u</mi><mo mathvariant="normal">′</mo></msup><mo>)</mo></mrow><annotation encoding="application/x-tex">u&#x27; \sim p_n(u&#x27;)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.751892em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault">u</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.001892em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">u</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> might approximate samples from the model distribution well enough in certain instances.</p>
+<figure data-type="image" tabindex="7"><img src="file://D:/OneDrive/1%E5%8D%8F%E5%90%8C%E5%AE%9A%E4%BD%8D/orb-slam3%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/assets/assets%5Cimage-20240917213102669.png" alt="image-20240917213102669" loading="lazy"></figure>
+<p>InfoNCE:</p>
+<figure data-type="image" tabindex="8"><img src="file://D:/OneDrive/1%E5%8D%8F%E5%90%8C%E5%AE%9A%E4%BD%8D/orb-slam3%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/assets/assets%5Cimage-20240917213607871.png" alt="image-20240917213607871" loading="lazy"></figure>
+<p>Instead of predicting a binary value, the InfoNCE loss leverages a distance metric, such as cosine similarity, computed in a model representation space.</p>
+<h4 id="clip">CLIP</h4>
+<p>Contrastive Language-Image Pre-training (CLIP): a common contrastive method using the InfoNCE loss.</p>
+<p>The positive pairs of examples are defined as one image and its corresponding ground truth caption while the negative examples are defined as the same image but with all the other captions contained in the mini-batch that described the other images.</p>
+<p>Incorporate vision and language in a shared representation of an image and its caption to similar embedding vectors using a contrastive loss.</p>
+<p>SigLIP: similar to CLIP but it uses the original NCE loss.</p>
+<p>Llip: It proposes to condition the encoding of an image on the target caption via a cross-attention module.</p>
+<h3 id="vlms-with-masking-objectives">VLMs with masking objectives</h3>
+<p>Masking can be viewed as a specific form of denoising autoencoder in which the noise has spatial structure.</p>
+<h4 id="flava">FLAVA</h4>
+<p>Foundational Language And Vision Alignment (FLAVA)</p>
+<p>Three core components:</p>
+<ol>
+<li>The Image Encoder: Vision Transformer(ViT) process images into patches for linear embedding and transformer-based representation, including a classification token ([CLSI]).</li>
+<li>The Text Encoder: tokenizes textual input using a transformer [Vaswani et al., 2017] and embeds them into vectors for contextual processing and outputting hidden state vectors alongside a classification token ([CLST]).</li>
+<li>The multimodal Encoder: fuses hidden states from both the image and text encoders, leveraging learned linear projections and <strong>cross-attention mechanisms</strong> within the transformer framework to integrate visual and textual information, highlighted by an additional multimodal classification token ([CLSM]).</li>
+</ol>
+<h4 id="maskvlm">MaskVLM</h4>
+<h4 id="information-theoretic-view-on-vlm-objectives">Information theoretic view on VLM objectives</h4>
+<h3 id="generative-based-vlms">Generative-based VLMs</h3>
+<p>In contrast to previous training paradigms which mostly operate on latent representations to build images or text abstractions that are then mapped between each other, the generative paradigm considers the generation of text and/or images.</p>
+<h4 id="coca">CoCa</h4>
+<p>An example of learning a text generator</p>
+<p>Employ the contrastive loss and a generative loss.</p>
+<h4 id="chameleon-and-cm3leon">Chameleon and CM3leon</h4>
+<p>CM3leon: two-stage training process.</p>
+<ol>
+<li>retrieval-augmented pretraining</li>
+<li>involves supervised fine-tuning (SFT), where the model undergoes multi-task instruction tuning.</li>
+</ol>
+<p>Chameleon is an extension to CM3leon.</p>
+<h3 id="vlms-from-pretrained-backbones">VLMs from Pretrained Backbones</h3>
+<h4 id="frozen">Frozen</h4>
+<p>first example of a model leveraging a pretrained LLM.</p>
+<h4 id="others">Others</h4>
+<p>MiniGPT, Qwen, BLIP2</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#an-introduction-to-vision-language-modeling">An Introduction to Vision-Language Modeling</a>
+<ul>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#the-families-of-vlms">The Families of VLMs</a>
+<ul>
+<li><a href="#early-work-on-vlms-based-on-transformers">Early work on VLMs based on transformers</a></li>
+<li><a href="#contrastive-based-vlms">Contrastive-based VLMs</a>
+<ul>
+<li><a href="#clip">CLIP</a></li>
+</ul>
+</li>
+<li><a href="#vlms-with-masking-objectives">VLMs with masking objectives</a>
+<ul>
+<li><a href="#flava">FLAVA</a></li>
+<li><a href="#maskvlm">MaskVLM</a></li>
+<li><a href="#information-theoretic-view-on-vlm-objectives">Information theoretic view on VLM objectives</a></li>
+</ul>
+</li>
+<li><a href="#generative-based-vlms">Generative-based VLMs</a>
+<ul>
+<li><a href="#coca">CoCa</a></li>
+<li><a href="#chameleon-and-cm3leon">Chameleon and CM3leon</a></li>
+</ul>
+</li>
+<li><a href="#vlms-from-pretrained-backbones">VLMs from Pretrained Backbones</a>
+<ul>
+<li><a href="#frozen">Frozen</a></li>
+<li><a href="#others">Others</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://zhuangaoooo.github.io/post/note-or-orb-slam3-source-code1/">
+              <h3 class="post-title">
+                Note | ORB-SLAM3 source code(1)
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://zhuangaoooo.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

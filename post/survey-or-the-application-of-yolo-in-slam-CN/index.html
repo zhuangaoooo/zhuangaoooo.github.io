@@ -1,0 +1,216 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Survey | YOLO在SLAM中的应用 | ZA</title>
+<link rel="shortcut icon" href="https://zhuangaoooo.github.io//favicon.ico?v=1726663026676">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://zhuangaoooo.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Survey | YOLO在SLAM中的应用 | ZA - Atom Feed" href="https://zhuangaoooo.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="最近想在SLAM中加入YOLO，于是先看看同行做了哪些工作。
+处理动态场景
+用YOLO来处理动态场景的思路很简单：检测到那些会动的目标（如人、车），并把相关区域内的点移除，不让这些点进入SLAM中。因此这些文章的不同之处就在于两个方面：如何..." />
+    <meta name="keywords" content="SLAM,YOLO,Survey,Research" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://zhuangaoooo.github.io/">
+  <img class="avatar" src="https://zhuangaoooo.github.io//images/avatar.png?v=1726663026676" alt="">
+  </a>
+  <h1 class="site-title">
+    ZA
+  </h1>
+  <p class="site-description">
+    Wish my blogs can give you a help!
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          Home
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          Archives
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          Tags
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          About
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Survey | YOLO在SLAM中的应用
+            </h2>
+            <div class="post-info">
+              <span>
+                2024-07-13
+              </span>
+              <span>
+                5 min read
+              </span>
+              
+                <a href="https://zhuangaoooo.github.io/tag/16sykqqf8/" class="post-tag">
+                  # SLAM
+                </a>
+              
+                <a href="https://zhuangaoooo.github.io/tag/CT3aI3NY0r/" class="post-tag">
+                  # YOLO
+                </a>
+              
+                <a href="https://zhuangaoooo.github.io/tag/5MbZkEQ3rc/" class="post-tag">
+                  # Survey
+                </a>
+              
+                <a href="https://zhuangaoooo.github.io/tag/rw-RI7l2Nr/" class="post-tag">
+                  # Research
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>最近想在SLAM中加入YOLO，于是先看看同行做了哪些工作。</p>
+<h1 id="处理动态场景">处理动态场景</h1>
+<p>用YOLO来处理动态场景的思路很简单：检测到那些会动的目标（如人、车），并把相关区域内的点移除，不让这些点进入SLAM中。因此这些文章的不同之处就在于两个方面：如何检测目标，如何选取移除的区域。</p>
+<p><strong>Visual SLAM in Human Populated Environments: Exploring the Trade-off between Accuracy and Speed of YOLO and Mask R-CNN</strong><br>
+Soares, Joao Carlos Virgolino, Marcelo Gattass, and Marco Antonio Meggiolaro. &quot;Visual SLAM in human populated environments: exploring the trade-off between accuracy and speed of YOLO and Mask R-CNN.&quot; 2019 19th International Conference on Advanced Robotics (ICAR). IEEE, 2019.<br>
+这篇文章只考虑了人作为动态物体。作者做了两个尝试，一个是用Mask R-CNN进行像素级别的实例分割，然后将属于人的键点移除；另一个则是用YOLO进行目标检测，然后将检测方框内的点全部移除。两种方法都是基于ORB-SLAM2的，其中建图线程和回环线程与ORB-SLAM2相同。<br>
+前者的资源消耗以及时间消耗是很大的，远不能满足实时性的要求。后者更快更轻量级，但准确率有下降。不过不得不吐槽，作者直接把检测方框内的所有特征点都移除实在有点简单粗暴了。<br>
+<img src="https://zhuangaoooo.github.io//post-images/1720858213132.png" alt="" loading="lazy"><br>
+<strong>YOLO-SLAM: A semantic SLAM system towards dynamic environment with geometric constraint</strong><br>
+Wu, Wenxin, et al. &quot;YOLO-SLAM: A semantic SLAM system towards dynamic environment with geometric constraint.&quot; Neural Computing and Applications (2022): 1-16.<br>
+核心思想与上一篇文章类似：阻止动态物体上的特征点进入SLAM，但这篇文章更加细致深入一些。<br>
+在YOLO识别到动态目标之后，作者用<strong>随机样本一致性RANSAC</strong>通过深度差异在方框中区分动态与静态，并去除动态范围内的点（前一篇文章是不论动态和静态把检测方框内的点全部去掉）。<br>
+<img src="https://zhuangaoooo.github.io//post-images/1720859465354.png" alt="" loading="lazy"><br>
+随机样本一致性（RANSAC, Random Sample Consensus）可以在含大噪声的数据中估计参数，是一种跌代方法。作者使用这种方法基于三个假设：1.人是最有可能移动的物体，占据了大部分边界框。2.出现在人身上的特征点的深度值差别不大。3.在边界框中，人与周围物体的深度差异明显。<br>
+文章中给出了具体Depth-RANSAC method的伪代码：</p>
+<blockquote>
+<figure data-type="image" tabindex="1"><img src="https://zhuangaoooo.github.io//post-images/1720859363576.png" alt="" loading="lazy"></figure>
+</blockquote>
+<h1 id="回环检测">回环检测</h1>
+<p><strong>Loop Closure Detection for Visual SLAM Systems Based on Convolutional Netural Network</strong><br>
+Shi, Xiangbin, and Lin Li. &quot;Loop closure detection for visual SLAM systems based on convolutional netural network.&quot; 2021 IEEE 24th International Conference on Computational Science and Engineering (CSE). IEEE, 2021.<br>
+传统回环检测是利用词袋模型(BoW, Bag-of-Words model)，词袋模型本质上也是用图像上有哪几种特征来描述一幅图像。这篇文章所做的就是用YOLO目标检测出来的向量来代替词袋模型里面的词。<br>
+说白了就是：用YOLOv4进行目标检测，利用LSH算法把相似的图像（根据目标检测输出的向量来判断）放进一个bucket中以避免暴力匹配，最后在bucket中根据余弦距离计算相似度。</p>
+<h1 id="语义slam">语义SLAM</h1>
+<p><strong>Semantic SLAM Based on Object Detection and Improved Octomap</strong><br>
+Zhang, Liang, et al. &quot;Semantic SLAM based on object detection and improved octomap.&quot; IEEE Access 6 (2018): 75545-75559.<br>
+这篇文章值得关注的内容其实挺多的：</p>
+<ol>
+<li>用YOLO生成语义信息后，如何构建关键帧与物体之间的关系。</li>
+<li>修改ORB-SLAM2中的Tracking线程以降低动态物体的影响，减少因相机运动过快而跟丢的情况，生成更多关键帧。</li>
+<li>考虑对象之间的语义上下文关系来优化和纠正由YOLO算法检测到的每个对象的类别标签。</li>
+<li>利用Fast Line Rasterization算法和多线程来提升八叉树地图的效率并加快建图速度。<br>
+这篇文章实验做得也很详实，里面的很多思路也值得参考，改天应该会再写一篇博客详细谈一谈这篇文章的具体内容。<br>
+<img src="https://zhuangaoooo.github.io//post-images/1720862712584.png" alt="" loading="lazy"></li>
+</ol>
+<h1 id="总结">总结</h1>
+<p>目标检测在最近几年发展非常迅速，在精度和效率上都有很大提升，其中的YOLO更是能达到实时性要求。不过，目前只有零星文章把YOLO应用在SLAM中，并且其中没有特别突出的作品。个人认为这个方向还有很大的挖掘空间。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%A4%84%E7%90%86%E5%8A%A8%E6%80%81%E5%9C%BA%E6%99%AF">处理动态场景</a></li>
+<li><a href="#%E5%9B%9E%E7%8E%AF%E6%A3%80%E6%B5%8B">回环检测</a></li>
+<li><a href="#%E8%AF%AD%E4%B9%89slam">语义SLAM</a></li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://zhuangaoooo.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

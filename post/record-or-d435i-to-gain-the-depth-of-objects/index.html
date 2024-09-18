@@ -1,0 +1,267 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Record | D435i to gain the depth of objects | ZA</title>
+<link rel="shortcut icon" href="https://zhuangaoooo.github.io//favicon.ico?v=1726663026676">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://zhuangaoooo.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Record | D435i to gain the depth of objects | ZA - Atom Feed" href="https://zhuangaoooo.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="A Chinese version is in https://zhuanlan.zhihu.com/p/715385774
+Environment: Ubuntu 20.04.6 LTS, ROS2 foxy, python 3.8
+In..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://zhuangaoooo.github.io/">
+  <img class="avatar" src="https://zhuangaoooo.github.io//images/avatar.png?v=1726663026676" alt="">
+  </a>
+  <h1 class="site-title">
+    ZA
+  </h1>
+  <p class="site-description">
+    Wish my blogs can give you a help!
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          Home
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          Archives
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          Tags
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          About
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Record | D435i to gain the depth of objects
+            </h2>
+            <div class="post-info">
+              <span>
+                2024-08-22
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>A Chinese version is in <code>https://zhuanlan.zhihu.com/p/715385774</code></p>
+<p>Environment: Ubuntu 20.04.6 LTS, ROS2 foxy, python 3.8</p>
+<h1 id="install-realsense-sdk-and-realsense-viewer">Install RealSense SDK and realsense-viewer</h1>
+<p>Follow the instructions of the official guide: <code>https://github.com/IntelRealSense/librealsense/blob/master/doc/distribution_linux.md</code></p>
+<h2 id="the-error">The Error</h2>
+<p>I met an error when enter <code>sudo apt-get install librealsense2-utils</code>.</p>
+<pre><code>shengzi@shengzi:~$ sudo apt-get install librealsense2-utils
+正在读取软件包列表... 完成
+正在分析软件包的依赖关系树
+正在读取状态信息... 完成
+有一些软件包无法被安装。如果您用的是 unstable 发行版，这也许是因为系统无法达到您要求的状态造成的。该版本中可能会有一些您需要的软件包尚未被创建或是它们已被从新到(Incoming)目录移出。
+下列信息可能会对解决问题有所帮助：
+下列软件包有未满足的依赖关系：
+librealsense2-utils : 依赖: libgtk-3-dev 但是它将不会被安装
+E: 无法修正错误，因为您要求某些软件包保持现状，就是它们破坏了软件包间的依赖关系。
+</code></pre>
+<p>And when I try to install libgtk-3-dev, an another error occurred.</p>
+<pre><code>shengzi@shengzi:~$ sudo apt-get install libgtk-3-dev
+正在读取软件包列表... 完成
+正在分析软件包的依赖关系树
+正在读取状态信息... 完成
+有一些软件包无法被安装。如果您用的是 unstable 发行版，这也许是因为系统无法达到您要求的状态造成的。该版本中可能会有一些您需要的软件包尚未被创建或是它们已被从新到(Incoming)目录移出。
+下列信息可能会对解决问题有所帮助：
+
+下列软件包有未满足的依赖关系：
+libgtk-3-dev : 依赖: libatk-bridge2.0-dev 但是它将不会被安装
+E: 无法修正错误，因为您要求某些软件包保持现状，就是它们破坏了软件包间的依赖关系。
+</code></pre>
+<p>Refer to <code>https://stackoverflow.com/questions/66375573/install-libgtk-3-dev-on-ubuntu-20-04</code>, the error can be solved as follow:</p>
+<ol>
+<li>Open and edit sources.list.</li>
+</ol>
+<pre><code>sudo gedit /etc/apt/sources.list
+</code></pre>
+<ol start="2">
+<li>Add following content and save: <code>deb Index of /ubuntu focal-updates main</code>.</li>
+<li>Update and install again.</li>
+</ol>
+<pre><code>sudo apt update
+sudo apt-get install libgtk-3-dev
+</code></pre>
+<h2 id="the-result">The Result</h2>
+<p>You can open RealSense Viewer to check images stream after installation.</p>
+<pre><code>realsense-viewer
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://zhuangaoooo.github.io//post-images/1724318759434.jpg" alt="" loading="lazy"></figure>
+<h1 id="install-realsense-ros">Install realsense-ros</h1>
+<p>Follow the instructions in <code>https://github.com/IntelRealSense/realsense-ros</code>.</p>
+<h2 id="the-error-2">The Error</h2>
+<p>In the step <code>rosdep install -i --from-path src --rosdistro $ROS_DISTRO --skip-keys=librealsense2 -y</code>, two libraries are required: xacro and diagnostic_updater. Enter following commands in terminal to install them.</p>
+<pre><code>sudo apt install ros-$ROS_DISTRO-xacro
+sudo apt install ros-$ROS_DISTRO-diagnostic-updater
+</code></pre>
+<h2 id="the-result-2">The Result</h2>
+<p>Run <code>ros2 run rviz2 rviz2</code> to start rviz and selet corresponding topics to view the message that D435i sends via ROS.<br>
+<img src="https://zhuangaoooo.github.io//post-images/1724319060034.jpg" alt="" loading="lazy"></p>
+<h1 id="detect-the-objects-and-gain-their-depth">Detect the objects and gain their depth</h1>
+<h2 id="detect">Detect</h2>
+<p>Install YOLOv8 following <code>https://github.com/ultralytics/ultralytics</code></p>
+<h2 id="estimate-the-depth">Estimate the Depth</h2>
+<p>Some points need to be emphasised:</p>
+<ol>
+<li>Remember to align the color and depth.</li>
+<li>Remember to use depth_scale to change the unit.<br>
+Considering that there are pixels which don't belong to objects, I utilize RANSAC algorithm to estimate the depth of objects.</li>
+</ol>
+<pre><code class="language-python">def estimate_depth_with_ransac(depth_data, num_samples=50):
+    # randomly select samples
+    sampled_depths = np.random.choice(depth_data.flatten(), num_samples, replace=False)
+    # estimate depth using RANSAC
+    ransac = RANSACRegressor()
+    X = np.arange(len(sampled_depths)).reshape(-1, 1)
+    ransac.fit(X, sampled_depths)
+    inlier_mask = ransac.inlier_mask_
+    estimated_depth = np.mean(sampled_depths[inlier_mask])
+    return estimated_depth
+</code></pre>
+<p>The whole program can be obtained from my github repository: <code>https://github.com/zhuangaoooo/Tools-of-D435i</code>.</p>
+<h2 id="the-result-3">The Result</h2>
+<figure data-type="image" tabindex="2"><img src="https://zhuangaoooo.github.io//post-images/1724319564173.jpg" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#install-realsense-sdk-and-realsense-viewer">Install RealSense SDK and realsense-viewer</a>
+<ul>
+<li><a href="#the-error">The Error</a></li>
+<li><a href="#the-result">The Result</a></li>
+</ul>
+</li>
+<li><a href="#install-realsense-ros">Install realsense-ros</a>
+<ul>
+<li><a href="#the-error-2">The Error</a></li>
+<li><a href="#the-result-2">The Result</a></li>
+</ul>
+</li>
+<li><a href="#detect-the-objects-and-gain-their-depth">Detect the objects and gain their depth</a>
+<ul>
+<li><a href="#detect">Detect</a></li>
+<li><a href="#estimate-the-depth">Estimate the Depth</a></li>
+<li><a href="#the-result-3">The Result</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://zhuangaoooo.github.io/post/survey-or-the-application-of-yolo-in-slam-CN/">
+              <h3 class="post-title">
+                Survey | YOLO在SLAM中的应用
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://zhuangaoooo.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

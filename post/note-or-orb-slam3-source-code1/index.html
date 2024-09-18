@@ -1,0 +1,469 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Note | ORB-SLAM3 source code(1) | ZA</title>
+<link rel="shortcut icon" href="https://zhuangaoooo.github.io//favicon.ico?v=1726663026676">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://zhuangaoooo.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Note | ORB-SLAM3 source code(1) | ZA - Atom Feed" href="https://zhuangaoooo.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="It's the beginning of a series, which is a note taken while reading the source code of orb-slam3. The original version f..." />
+    <meta name="keywords" content="SLAM" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://zhuangaoooo.github.io/">
+  <img class="avatar" src="https://zhuangaoooo.github.io//images/avatar.png?v=1726663026676" alt="">
+  </a>
+  <h1 class="site-title">
+    ZA
+  </h1>
+  <p class="site-description">
+    Wish my blogs can give you a help!
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          Home
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          Archives
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          Tags
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          About
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Note | ORB-SLAM3 source code(1)
+            </h2>
+            <div class="post-info">
+              <span>
+                2024-09-06
+              </span>
+              <span>
+                8 min read
+              </span>
+              
+                <a href="https://zhuangaoooo.github.io/tag/16sykqqf8/" class="post-tag">
+                  # SLAM
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>It's the beginning of a series, which is a note taken while reading the source code of orb-slam3. The original version from UZ-SLAMLab has some trouble when running with ROS. So I adapt another version supporting ROS whose link is https://github.com/thien94/orb_slam3_ros.</p>
+<p>In this note, I am going to introduce <code>ros_rgbd.cc</code> ,  <code>system.cc</code> and <code>ORBextractor.cc</code></p>
+<h1 id="some-important-things">Some important things</h1>
+<h2 id="the-order-of-naming">The order of naming</h2>
+<p>The first(or with second) letter of a variable should obey the following rules:</p>
+<ul>
+<li>
+<p><code>m</code> for member variable of a class;</p>
+</li>
+<li>
+<p><code>p</code> for pointer;</p>
+</li>
+<li>
+<p><code>n</code> for int;</p>
+</li>
+<li>
+<p><code>b</code> for bool;</p>
+</li>
+<li>
+<p><code>s</code> for std::set;</p>
+</li>
+<li>
+<p><code>v</code> for std::vector;</p>
+</li>
+<li>
+<p><code>l</code> for std::list;</p>
+</li>
+<li>
+<p><code>KF</code> for KeyFrame.</p>
+</li>
+</ul>
+<h2 id="multithreading">Multithreading</h2>
+<p>Three threads: Tracking, Local Mapping, Loop Closing.</p>
+<figure data-type="image" tabindex="1"><img src="https://zhuangaoooo.github.io//post-images/1725626310272.png" alt="" loading="lazy"></figure>
+<p>Only the selected frame, that is, keyframes, can enter local mapping and loop closing.</p>
+<p>Because of the existence of Multithreading, we need to use mutex to avoid chaos. The member variables are set private or protected, and the addition of mutex is in the public functions operating them. For example,</p>
+<pre><code class="language-cpp">class KeyFrame{
+
+protected:
+
+    KeyFrame* mpParent;
+
+    ...
+
+public:
+
+    KeyFrame* KeyFrame::GetParent()
+
+    {
+
+        unique_lock&lt;mutex&gt; lockCon(mMutexConnections);
+
+        return mpParent;
+
+    }
+
+}
+</code></pre>
+<h1 id="ros_rgbdcc">ros_rgbd.cc</h1>
+<p>An <code>ImageGrabber</code> class with a method <code>GrabRGBD</code> is defined in this file.</p>
+<pre><code class="language-cpp">class ImageGrabber
+
+{
+
+public:
+
+​    ImageGrabber(){};
+
+​    void GrabRGBD(const sensor_msgs::ImageConstPtr&amp; msgRGB,const sensor_msgs::ImageConstPtr&amp; msgD);
+
+};
+</code></pre>
+<p>In the Main Function:</p>
+<ul>
+<li>
+<p>Some preparing jobs, such as initialzing ROS and loading vocabulary file.</p>
+</li>
+<li>
+<p>Initialization of the SLAM system.</p>
+</li>
+</ul>
+<pre><code class="language-cpp"> pSLAM = new ORB_SLAM3::System(voc_file, settings_file, sensor_type, enable_pangolin);
+</code></pre>
+<ul>
+<li>
+<p>Creates an instance of <code>ImageGrabber</code></p>
+</li>
+<li>
+<p>Sets up subscribers for RGB and depth images and synchronizes them using an approximate time policy.</p>
+</li>
+<li>
+<p>Registers a callback function that calls <code>GrabRGBD</code>.</p>
+</li>
+<li>
+<p>Enters the ROS event loop with <code>ros::spin()</code>, which will process callbacks until the node is shut down.</p>
+</li>
+<li>
+<p>Shuts down the SLAM system and ROS when the node is shut down.</p>
+</li>
+</ul>
+<p>ImageGrabber::GrabRGBD Method:</p>
+<ul>
+<li>
+<p>Converts ROS images messages to OpenCV cv::Mat format using cv_bridge.</p>
+</li>
+<li>
+<p>Call the <code>TrackRGBD</code> method of the SLAM system to process the RGBD images and obtain camera pose.</p>
+</li>
+</ul>
+<h1 id="the-system-class">The System class</h1>
+<p>Some important member functions and member variables:</p>
+<table>
+<thead>
+<tr>
+<th>Functions/Members</th>
+<th>Access Modifiers</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sophus::SE3f TrackRGBD(const cv::Mat &amp;im, const cv::Mat &amp;depthmap, const double &amp;timestamp, const vector<a href="IMU::Point">IMU::Point</a>&amp; vImuMeas = vector<a href="IMU::Point">IMU::Point</a>(), string filename=&quot;&quot;);</td>
+<td>public</td>
+<td>Process the given rgbd frame. Depthmap must be registered to the RGB frame.</td>
+</tr>
+<tr>
+<td>System(const string &amp;strVocFile, const string &amp;strSettingsFile, const eSensor sensor, const bool bUseViewer = true, const int initFr = 0, const string &amp;strSequence = std::string());</td>
+<td>pubic</td>
+<td>Initialize the SLAM system. It launches the Local Mapping, Loop Closing and Viewer threads.</td>
+</tr>
+<tr>
+<td>eSensor mSensor</td>
+<td>private</td>
+<td>Input sensor</td>
+</tr>
+<tr>
+<td>Tracking* mpTracker</td>
+<td>private</td>
+<td>It receives a frame and computes the associated camera pose. It also decides when to insert a new keyframe, create some new MapPoints and performs relocalization if tracking fails.</td>
+</tr>
+<tr>
+<td>LocalMapping* mpLocalMapper</td>
+<td>private</td>
+<td></td>
+</tr>
+<tr>
+<td>std::thread* mptLocalMapping</td>
+<td>private</td>
+<td></td>
+</tr>
+<tr>
+<td>LoopClosing* mpLoopCloser</td>
+<td>private</td>
+<td></td>
+</tr>
+<tr>
+<td>std::thread* mptLoopClosing</td>
+<td>private</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="constructor">Constructor</h2>
+<p>Some parts of the code have been omitted.</p>
+<pre><code class="language-cpp">System::System(const string &amp;strVocFile, const string &amp;strSettingsFile, const eSensor sensor,
+               const bool bUseViewer, const int initFr, const string &amp;strSequence):
+    mSensor(sensor), mpViewer(static_cast&lt;Viewer*&gt;(NULL)), mbReset(false), mbResetActiveMap(false),
+    mbActivateLocalizationMode(false), mbDeactivateLocalizationMode(false), mbShutDown(false)
+{
+    // Output welcome message
+    //...
+
+    //Check settings file
+    cv::FileStorage fsSettings(strSettingsFile.c_str(), cv::FileStorage::READ);
+    //...
+    
+    //Load ORB Vocabulary
+    //...
+
+    //Create KeyFrame Database
+    mpKeyFrameDatabase = new KeyFrameDatabase(*mpVocabulary);
+
+    bool loadedAtlas = false;
+    if(mStrLoadAtlasFromFile.empty())
+    {
+        //Create the Atlas
+        cout &lt;&lt; &quot;Initialization of Atlas from scratch &quot; &lt;&lt; endl;
+        mpAtlas = new Atlas(0);
+    }
+    else
+    {//...
+
+    //Create Drawers. These are used by the Viewer
+    mpFrameDrawer = new FrameDrawer(mpAtlas);
+    mpMapDrawer = new MapDrawer(mpAtlas, strSettingsFile, settings_);
+
+    //Initialize the Tracking thread
+    //(it will live in the main thread of execution, the one that called this constructor)
+    cout &lt;&lt; &quot;Seq. Name: &quot; &lt;&lt; strSequence &lt;&lt; endl;
+    mpTracker = new Tracking(this, mpVocabulary, mpFrameDrawer, mpMapDrawer,
+                             mpAtlas, mpKeyFrameDatabase, strSettingsFile, mSensor, settings_, strSequence);
+
+    //Initialize the Local Mapping thread and launch
+    mpLocalMapper = new LocalMapping(this, mpAtlas, mSensor==MONOCULAR || mSensor==IMU_MONOCULAR,
+                                     mSensor==IMU_MONOCULAR || mSensor==IMU_STEREO || mSensor==IMU_RGBD, strSequence);
+    mptLocalMapping = new thread(&amp;ORB_SLAM3::LocalMapping::Run,mpLocalMapper);
+    //...
+
+    //Initialize the Loop Closing thread and launch
+    mpLoopCloser = new LoopClosing(mpAtlas, mpKeyFrameDatabase, mpVocabulary, mSensor!=MONOCULAR, activeLC); // mSensor!=MONOCULAR);
+    mptLoopClosing = new thread(&amp;ORB_SLAM3::LoopClosing::Run, mpLoopCloser);
+
+    //Set pointers between threads
+    mpTracker-&gt;SetLocalMapper(mpLocalMapper);
+    mpTracker-&gt;SetLoopClosing(mpLoopCloser);
+
+    mpLocalMapper-&gt;SetTracker(mpTracker);
+    mpLocalMapper-&gt;SetLoopCloser(mpLoopCloser);
+
+    mpLoopCloser-&gt;SetTracker(mpTracker);
+    mpLoopCloser-&gt;SetLocalMapper(mpLocalMapper);
+
+    //Initialize the Viewer thread and launch
+    if(bUseViewer)
+    {
+        mpViewer = new Viewer(this, mpFrameDrawer,mpMapDrawer,mpTracker,strSettingsFile,settings_);
+        mptViewer = new thread(&amp;Viewer::Run, mpViewer);
+        mpTracker-&gt;SetViewer(mpViewer);
+        mpLoopCloser-&gt;mpViewer = mpViewer;
+        mpViewer-&gt;both = mpFrameDrawer-&gt;both;
+    }
+
+    // Fix verbosity
+    Verbose::SetTh(Verbose::VERBOSITY_QUIET);
+
+}
+</code></pre>
+<p>As LocalMapping and LoopClosing threads have corresponding std::thread type member variables, why the Tracking thread doesn't have corresponding std::thread type member variable?</p>
+<p>Because the Tracking thread is the main thread. The LocalMapping and LoopClosing thread is the son threads, controlled by the main thread by two pointers(mpLocalMapping and mpLoopClosing).</p>
+<h2 id="trackrgbd">TrackRGBD</h2>
+<pre><code class="language-CPP">Sophus::SE3f System::TrackRGBD(const cv::Mat &amp;im, const cv::Mat &amp;depthmap, const double &amp;timestamp, const vector&lt;IMU::Point&gt;&amp; vImuMeas, string filename)
+{
+    // Check if the type of sensor is right. Clone and resize the images.
+    //...
+
+    // Check mode change
+    //...
+
+    // Check reset
+    //...
+
+    if (mSensor == System::IMU_RGBD)
+        for(size_t i_imu = 0; i_imu &lt; vImuMeas.size(); i_imu++)
+            mpTracker-&gt;GrabImuData(vImuMeas[i_imu]);
+
+    // Use the Tracker to track
+    Sophus::SE3f Tcw = mpTracker-&gt;GrabImageRGBD(imToFeed,imDepthToFeed,timestamp,filename);
+	
+    // Update system status
+    unique_lock&lt;mutex&gt; lock2(mMutexState);
+    mTrackingState = mpTracker-&gt;mState;
+    mTrackedMapPoints = mpTracker-&gt;mCurrentFrame.mvpMapPoints;
+    mTrackedKeyPointsUn = mpTracker-&gt;mCurrentFrame.mvKeysUn;
+    mTrackedKeyPoints = mpTracker-&gt;mCurrentFrame.mvKeys;
+
+    return Tcw;
+}
+</code></pre>
+<h1 id="the-orbextractor-class">The ORBextractor class</h1>
+<p>Some important points:</p>
+<ol>
+<li>Pyramid</li>
+<li>Distribute feature points evenly: (1) Divide into cells, and if the response values of feature points in a certain cell are generally small, lower the threshold and search again. (2) If feature points are densely in a certain cell, only select the points with higher response values. (<code>vector&lt;cv::KeyPoint&gt; ORBextractor::DistributeOctTree(const vector&lt;cv::KeyPoint&gt;&amp; vToDistributeKeys, const int &amp;minX, const int &amp;maxX, const int &amp;minY, const int &amp;maxY, const int &amp;N, const int &amp;level)</code>)</li>
+</ol>
+<p>The ORBextractor class is used through the function <code>int ORBextractor::operator()( InputArray _image, InputArray _mask, vector&lt;KeyPoint&gt;&amp; _keypoints, OutputArray _descriptors, std::vector&lt;int&gt; &amp;vLappingArea)</code></p>
+<p>In the Frame class, the ORBextractor class is used in the function ExtractORB()</p>
+<pre><code class="language-CPP">void Frame::ExtractORB(int flag, const cv::Mat &amp;im, const int x0, const int x1)
+{
+    vector&lt;int&gt; vLapping = {x0,x1};
+    if(flag==0)
+        monoLeft = (*mpORBextractorLeft)(im,cv::Mat(),mvKeys,mDescriptors,vLapping);
+    else
+        monoRight = (*mpORBextractorRight)(im,cv::Mat(),mvKeysRight,mDescriptorsRight,vLapping);
+}
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#some-important-things">Some important things</a>
+<ul>
+<li><a href="#the-order-of-naming">The order of naming</a></li>
+<li><a href="#multithreading">Multithreading</a></li>
+</ul>
+</li>
+<li><a href="#ros_rgbdcc">ros_rgbd.cc</a></li>
+<li><a href="#the-system-class">The System class</a>
+<ul>
+<li><a href="#constructor">Constructor</a></li>
+<li><a href="#trackrgbd">TrackRGBD</a></li>
+</ul>
+</li>
+<li><a href="#the-orbextractor-class">The ORBextractor class</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://zhuangaoooo.github.io/post/record-or-d435i-to-gain-the-depth-of-objects/">
+              <h3 class="post-title">
+                Record | D435i to gain the depth of objects
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://zhuangaoooo.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
