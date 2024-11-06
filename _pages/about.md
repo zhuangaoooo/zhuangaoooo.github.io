@@ -17,42 +17,19 @@ redirect_from:
 
 <span class='anchor' id='about-me'></span>
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. Suspendisse condimentum, libero vel tempus mattis, risus risus vulputate libero, elementum fermentum mi neque vel nisl. Maecenas facilisis maximus dignissim. Curabitur mattis vulputate dui, tincidunt varius libero luctus eu. Mauris mauris nulla, scelerisque eget massa id, tincidunt congue felis. Sed convallis tempor ipsum rhoncus viverra. Pellentesque nulla orci, accumsan volutpat fringilla vitae, maximus sit amet tortor. Aliquam ultricies odio ut volutpat scelerisque. Donec nisl nisl, porttitor vitae pharetra quis, fringilla sed mi. Fusce pretium dolor ut aliquam consequat. Cras volutpat, tellus accumsan mattis molestie, nisl lacus tempus massa, nec malesuada tortor leo vel quam. Aliquam vel ex consectetur, vehicula leo nec, efficitur eros. Donec convallis non urna quis feugiat.
+I am currently pursuing the B.S. degree in IntelliSense Engineering at Shanghai Jiao Tong University, School of Electronic Information and Electrical Engineering. I'm exploring the field of **Simultaneous Localization And Mapping(SLAM)** and **Visual Language Navigation(VLN)** in the Collaborative Localization Research Group which is led by Prof. Zou DanPing now.
 
-My research interest includes neural machine translation and computer vision. I have published more than 100 papers at the top international AI conferences with total <a href='https://scholar.google.com/citations?user=DhtAFkwAAAAJ'>google scholar citations <strong><span id='total_cit'>260000+</span></strong></a> (You can also use google scholar badge <a href='https://scholar.google.com/citations?user=DhtAFkwAAAAJ'><img src="https://img.shields.io/endpoint?url={{ url | url_encode }}&logo=Google%20Scholar&labelColor=f6f6f6&color=9cf&style=flat&label=citations"></a>).
+Although I haven't decided on my final research direction yet, my interest is particularly piqued by the perception of agents, equipping a brain in a vat with senses. I believe this is the first step towards achieving embodied intelligence. I can't wait to explore the frontiers of human knowledge and bring ideas into real life. To fulfill this goal, I study subjects broadly, from hardware to software and from control to instrument, preparing myself to do more interesting and impressive work in the future.
 
-
-# 🔥 News
-- *2022.02*: &nbsp;🎉🎉 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. 
-- *2022.02*: &nbsp;🎉🎉 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. 
-
-# 📝 Publications 
-
-<div class='paper-box'><div class='paper-box-image'><div><div class="badge">CVPR 2016</div><img src='images/500x300.png' alt="sym" width="100%"></div></div>
-<div class='paper-box-text' markdown="1">
-
-[Deep Residual Learning for Image Recognition](https://openaccess.thecvf.com/content_cvpr_2016/papers/He_Deep_Residual_Learning_CVPR_2016_paper.pdf)
-
-**Kaiming He**, Xiangyu Zhang, Shaoqing Ren, Jian Sun
-
-[**Project**](https://scholar.google.com/citations?view_op=view_citation&hl=zh-CN&user=DhtAFkwAAAAJ&citation_for_view=DhtAFkwAAAAJ:ALROH1vI_8AC) <strong><span class='show_paper_citations' data='DhtAFkwAAAAJ:ALROH1vI_8AC'></span></strong>
-- Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. 
-</div>
-</div>
-
-- [Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet](https://github.com), A, B, C, **CVPR 2020**
+# 📝 Research Experience 
+- *2024 - now* **IDSLAM**. Text-based Simultaneous Localization And Mapping(SLAM) has garnered widespread attention in recent years. I have observed that there are numerous texts with numbered information in the environment, such as house numbers and shelf tags, which can be referred to as IDs. IDs possess excellent properties which can enhance the robustness and accuracy of SLAM systems. Upon further research, Language-Vision Models were found to be closely related to the project and thus were incorporated into the research scope.
+- *2023 - 2024* **Drone-Assisted Multi-Sensory Autonomous Driving System**. Considering that relying solely on onboard sensors limits the safety and efficiency of autonomous driving, introducing a multi-sensory system to perceive road conditions is an effective solution. We propose the Drone-Assisted Multi-Sensory Autonomous Driving System which consists of a vehicle perception system, a blind spot detection system, a drone control system, a drone perception system, and a driving decision system. The supervisor of this project is Yanbo Liu, Shanghai Jiao Tong University. I am a co-first author of our paper, which has been accepted for presentation at SAECCE2024, scheduled for November. Additionally, it is awarded as an outstanding paper and has been recommended for publication in the Selected Papers Collection.
 
 # 🎖 Honors and Awards
-- *2021.10* Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. 
-- *2021.09* Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. 
+- *2024* Mathematical Contest In Modeling, the Meritorious Winner. 
+- *2023* China-U.S. Young Maker Competition Final, the First Prize of Main Track & the Intel Excellence Award.
+- *2023* Contemporary Undergraduate Mathematical Contest in Modeling, the Second Prize in Shanghai.
+- *2023* TI Cup National Undergraduate Electronics Design Contest, the Second Prize in Shanghai.
 
 # 📖 Educations
-- *2019.06 - 2022.04 (now)*, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. 
-- *2015.09 - 2019.06*, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. 
-
-# 💬 Invited Talks
-- *2021.06*, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. 
-- *2021.03*, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet.  \| [\[video\]](https://github.com/)
-
-# 💻 Internships
-- *2019.05 - 2020.02*, [Lorem](https://github.com/), China.
+- *2022 - now* **Shanghai Jiao Tong University**, School of Electronic Information and Electrical Engineering. MAJOR: IntelliSense Engineering; MINOR: Economics.
